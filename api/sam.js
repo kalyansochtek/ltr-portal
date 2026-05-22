@@ -2,21 +2,17 @@ export default async function handler(req, res) {
   try {
     const API_KEY = process.env.VITE_SAM_API_KEY;
 
-    const url =
-      `https://api.sam.gov/prod/opportunities/v2/search?api_key=${API_KEY}&limit=5&offset=0`;
+    const response = await fetch(
+      `https://api.sam.gov/prod/opportunities/v2/search?api_key=${API_KEY}&limit=1`
+    );
 
-    const response = await fetch(url);
+    const data = await response.json();
 
-    const text = await response.text();
+    res.status(200).json(data);
 
-    res.status(200).json({
-      status: response.status,
-      raw: text,
-    });
-
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({
-      error: err.message,
+      error: error.message
     });
   }
 }
