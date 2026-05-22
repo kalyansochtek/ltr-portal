@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const API_KEY = process.env.VITE_SAM_API_KEY;
 
     const response = await fetch(
-      `https://api.sam.gov/prod/opportunities/v2/search?api_key=${API_KEY}&limit=5&noticeType=Presolicitation`
+      `https://api.sam.gov/opportunities/v2/search?api_key=${API_KEY}&limit=5`
     );
 
     const text = await response.text();
