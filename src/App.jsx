@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect  } from "react";
+import { fetchSAMData } from "./api";
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 const SYS = `You are an AI public-sector capture strategist for Logical Technology and Research (LTR). Be direct, skeptical, strategic, and operationally credible. Never guarantee awards. Never overstate PWIN. Identify operational, financial, legal, procurement, compliance, staffing, and reputation risks. Always evaluate PRIME/SUB/TEAM/NO-BID. LTR holds: GSA MAS, Polaris HUBZone, OASIS+ HUBZone, SeaPort-NxG. Respond only in valid JSON as instructed.`;
@@ -1665,6 +1666,10 @@ export default function App() {
   const [contacts, setContacts] = useState(CONTACTS);
   const [calls, setCalls] = useState(CALLS_LOG);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
+
+  useEffect(() => {
+    fetchSAMData();
+  }, []);
 
   const NAV = [
     { id:"exec",      label:"Executive Dashboard",   ic:"◈",  sec:"OVERVIEW" },
