@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const API_KEY = process.env.VITE_SAM_API_KEY;
 
     const response = await fetch(
-      `https://api.sam.gov/prod/opportunities/v2/search?api_key=${API_KEY}&limit=1`
+      `https://api.sam.gov/prod/opportunities/v2/search?api_key=YOUR_KEY&limit=1`
     );
 
     const data = await response.json();
