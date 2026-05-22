@@ -1625,164 +1625,33 @@ function Analytics({ opps, contacts, calls }) {
 // ─── SAVED OPPS ───────────────────────────────────────────────────────────────
 function SavedOpps({ opps }) {
   const [filter, setFilter] = useState("ALL");
-
-  const fs = ["ALL", "PRIME", "SUB", "TEAM", "NO-BID"];
-
-  const shown =
-    filter === "ALL"
-      ? opps
-      : opps.filter((o) => o.decision === filter);
-
+  const fs = ["ALL","PRIME","SUB","TEAM","NO-BID"];
+  const shown = filter==="ALL"?opps:opps.filter(o=>o.decision===filter);
   return (
     <div>
-      <div className="ph">
-        <div>
-          <div className="ph-title">
-            Opportunity Database
-          </div>
-
-          <div className="ph-sub">
-            {opps.length} TRACKED OPPORTUNITIES · FULL PIPELINE REGISTRY
-          </div>
-        </div>
-      </div>
-
+      <div className="ph"><div><div className="ph-title">Opportunity Database</div><div className="ph-sub">{opps.length} TRACKED OPPORTUNITIES · FULL PIPELINE REGISTRY</div></div></div>
       <div className="ct">
-
-        {/* TABS */}
-        <div className="tabs">
-          {fs.map((f) => (
-            <div
-              key={f}
-              className={`tab ${filter === f ? "on" : ""}`}
-              onClick={() => setFilter(f)}
-            >
-              {f} (
-              {f === "ALL"
-                ? opps.length
-                : opps.filter((o) => o.decision === f).length}
-              )
-            </div>
-          ))}
-        </div>
-
-        {/* TABLE */}
+        <div className="tabs">{fs.map(f=><div key={f} className={`tab ${filter===f?"on":""}`} onClick={()=>setFilter(f)}>{f} ({f==="ALL"?opps.length:opps.filter(o=>o.decision===f).length})</div>)}</div>
         <div className="card card-flush">
           <table className="tbl">
-
-            <thead>
-              <tr>
-                <th>Opportunity</th>
-                <th>Agency</th>
-                <th>Sector</th>
-                <th>Set-Aside</th>
-                <th>Vehicle</th>
-                <th>Stage</th>
-                <th>Decision</th>
-                <th>PWIN</th>
-                <th>Value</th>
-                <th>Margin</th>
-                <th>Due</th>
-              </tr>
-            </thead>
-
+            <thead><tr><th>Opportunity</th><th>Agency</th><th>Sector</th><th>Set-Aside</th><th>Vehicle</th><th>Stage</th><th>Decision</th><th>PWIN</th><th>Value</th><th>Margin</th><th>Due</th></tr></thead>
             <tbody>
-
-              {shown.length === 0 ? (
-
-                <tr>
-                  <td
-                    colSpan={11}
-                    style={{
-                      textAlign: "center",
-                      padding: 32,
-                      color: "var(--fog)"
-                    }}
-                  >
-                    No opportunities in this category.
-                  </td>
+              {shown.length===0?<tr><td colSpan={11} style={{ textAlign:"center", padding:32, color:"var(--fog)" }}>No opportunities in this category.</td></tr>:shown.map(o=>(
+                <tr key={o.id}>
+                  <td className="fw6 f12" style={{ maxWidth:180 }}>{o.title}</td>
+                  <td><span className="bdg bdg-b">{o.agency}</span></td>
+                  <td><Sec s={o.sector}/></td>
+                  <td className="f11 c-fog">{o.setAside}</td>
+                  <td className="mono f10 c-fog">{o.vehicle}</td>
+                  <td><span className="bdg bdg-f">{o.stage}</span></td>
+                  <td><Dec d={o.decision}/></td>
+                  <td><span className="mono fw7 f11" style={{ color:pc(o.pwin) }}>50%</span></td>
+                  <td className="mono f10 c-fog">${o.value}</td>
+                  <td className="mono f10" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>15%</td>
+                  <td className="mono f10 c-fog">{o.due}</td>
                 </tr>
-
-              ) : (
-
-                shown.map((o) => (
-
-                  <tr key={o.id}>
-
-                    <td
-                      className="fw6 f12"
-                      style={{ maxWidth: 180 }}
-                    >
-                      {o.title}
-                    </td>
-
-                    <td>
-                      <span className="bdg bdg-b">
-                        {o.agency}
-                      </span>
-                    </td>
-
-                    <td>
-                      <Sec s={o.sector} />
-                    </td>
-
-                    <td className="f11 c-fog">
-                      {o.setAside}
-                    </td>
-
-                    <td className="mono f10 c-fog">
-                      {o.vehicle}
-                    </td>
-
-                    <td>
-                      <span className="bdg bdg-f">
-                        {o.stage}
-                      </span>
-                    </td>
-
-                    <td>
-                      <Dec d={o.decision} />
-                    </td>
-
-                    <td>
-                      <span
-                        className="mono fw7 f11"
-                        style={{ color: pc(o.pwin) }}
-                      >
-                        {o.pwin}%
-                      </span>
-                    </td>
-
-                    <td className="mono f10 c-fog">
-                      {o.value}
-                    </td>
-
-                    <td
-                      className="mono f10"
-                      style={{
-                        color:
-                          o.margin >= 18
-                            ? "var(--emerald)"
-                            : o.margin >= 12
-                            ? "var(--amber)"
-                            : "var(--rose)"
-                      }}
-                    >
-                      {o.margin}%
-                    </td>
-
-                    <td className="mono f10 c-fog">
-                      {o.due}
-                    </td>
-
-                  </tr>
-
-                ))
-
-              )}
-
+              ))}
             </tbody>
-
           </table>
         </div>
       </div>
@@ -1802,13 +1671,49 @@ const [samData, setSamData] = useState([]);
   const [calls, setCalls] = useState(CALLS_LOG);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
 
- useEffect(() => {
+  useEffect(() => {
   async function loadSAM() {
     const samData = await fetchSAMData();
+
     console.log("SAM DATA:", samData);
 
-    if (samData && samData.length > 0) {
-      setOpps(samData);
+    if (samData?.opportunitiesData) {
+
+      const formattedOpps =
+        samData.opportunitiesData.map((item, index) => ({
+          id: index + 1,
+
+          title: item.title || "No Title",
+
+          agency:
+            item.fullParentPathName || "Unknown Agency",
+
+          sector: "Federal",
+
+          setAside:
+            item.typeOfSetAsideDescription || "Open",
+
+          vehicle: "Federal",
+
+          stage: "IDENTIFY",
+
+          decision: "PRIME",
+
+          pwin: 50,
+
+          value: 1,
+
+          margin: 15,
+
+          due: item.responseDeadLine
+            ? item.responseDeadLine.split("T")[0]
+            : "N/A",
+        }));
+
+      console.log("FORMATTED:", formattedOpps);
+
+      setOpps(formattedOpps);
+      console.log("STATE DATA:", formattedOpps);
     }
   }
 
