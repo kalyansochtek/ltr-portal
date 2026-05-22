@@ -1670,20 +1670,15 @@ const [samData, setSamData] = useState([]);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
 
 useEffect(() => {
+  async function loadSAM() {
+    const samData = await fetchSAMData();
 
-  async function loadData() {
-
-    const data = await fetchSAMData();
-
-    console.log(data);
-
-    if (data?.opportunitiesData) {
-      setSamData(data.opportunitiesData);
+    if (samData) {
+      setOps(samData);
     }
   }
 
-  loadData();
-
+  loadSAM();
 }, []);
 
   const NAV = [
