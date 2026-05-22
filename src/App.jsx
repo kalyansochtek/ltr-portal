@@ -487,7 +487,7 @@ function ExecDash({ setPage, opps, contacts, calls }) {
                       <span className="fw6 f12">{o.title}</span>
                       <span className={`bdg ${d < 30 ? "bdg-r" : "bdg-a"}`}>{d}d left</span>
                     </div>
-                    <div className="row gap6"><Sec s={o.sector}/><Dec d={o.decision}/><span className="mono f11 c-fog">{o.pwin}% PWIN</span></div>
+                    <div className="row gap6"><Sec s={o.organizationType}/><Dec d={o.typeOfSetAsideDescription}/><span className="mono f11 c-fog">50% PWIN</span></div>
                   </div>
                 );
               })}
@@ -525,14 +525,14 @@ function ExecDash({ setPage, opps, contacts, calls }) {
               {opps.map(o => (
                 <tr key={o.id}>
                   <td className="fw6 f12" style={{ maxWidth:200 }}>{o.title}</td>
-                  <td><span className="bdg bdg-b">{o.agency}</span></td>
-                  <td><Sec s={o.sector}/></td>
+                  <td><span className="bdg bdg-b">{o.fullParentPathName}</span></td>
+                  <td><Sec s={o.organizationType}/></td>
                   <td><span className="bdg bdg-f">{o.stage}</span></td>
-                  <td><Dec d={o.decision}/></td>
-                  <td><span className="mono fw7 f12" style={{ color: pc(o.pwin) }}>{o.pwin}%</span></td>
-                  <td className="mono f11 c-fog">${o.value}M</td>
-                  <td className="mono f11" style={{ color: o.margin >= 18 ? "var(--emerald)" : o.margin >= 12 ? "var(--amber)" : "var(--rose)" }}>{o.margin}%</td>
-                  <td className="mono f11 c-fog">{o.due}</td>
+                  <td><Dec d={o.typeOfSetAsideDescription}/></td>
+                  <td><span className="mono fw7 f12" style={{ color: pc(o.pwin) }}>50%</span></td>
+                  <td className="mono f11 c-fog">${o.naicsCode}</td>
+                  <td className="mono f11" style={{ color: o.margin >= 18 ? "var(--emerald)" : o.margin >= 12 ? "var(--amber)" : "var(--rose)" }}>15%</td>
+                  <td className="mono f11 c-fog">{o.responseDeadLine}</td>
                 </tr>
               ))}
             </tbody>
@@ -573,15 +573,15 @@ function PWINDash({ opps }) {
                 <div className="row-b mb16">
                   <div>
                     <div className="fw7 f14 c-snow mb8" style={{ marginBottom:6 }}>{o.title}</div>
-                    <div className="row gap6"><span className="bdg bdg-b">{o.agency}</span><Sec s={o.sector}/><span className="bdg bdg-f">{o.type}</span><Dec d={o.decision}/></div>
+                    <div className="row gap6"><span className="bdg bdg-b">{o.fullParentPathName}</span><Sec s={o.organizationType}/><span className="bdg bdg-f">{o.type}</span><Dec d={o.typeOfSetAsideDescription}/></div>
                   </div>
-                  <Ring score={o.pwin} size={74}/>
+                  <Ring score={50} size={74} />
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:10 }}>
                   {[
-                    { l:"Contract Value", v:`$${o.value}M`, c:"var(--snow)" },
+                    { l:"Contract Value", v:`$${o.naicsCode}`, c:"var(--snow)" },
                     { l:"Wtd. Value", v:`$${(o.value*o.pwin/100).toFixed(1)}M`, c:"var(--emerald)" },
-                    { l:"Est. Margin", v:`${o.margin}%`, c: o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" },
+                    { l:"Est. Margin", v:`$15%`, c: o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" },
                     { l:"Vehicle", v:o.vehicle, c:"var(--blue)", small:true },
                     { l:"Due In", v:dLeft>0?`${dLeft}d`:"Overdue", c:dLeft<30?"var(--rose)":dLeft<60?"var(--amber)":"var(--fog)" },
                   ].map(({ l, v, c, small }) => (
@@ -1020,7 +1020,7 @@ Opportunity: ${JSON.stringify({title:opp.title,agency:opp.agency,value:opp.value
             {opps.map((o,i) => (
               <div key={i} onClick={()=>analyze(o)} style={{ padding:11, borderRadius:"var(--r8)", border:`1px solid ${sel?.id===o.id?"var(--blue)":"var(--line)"}`, marginBottom:7, cursor:"pointer", background:sel?.id===o.id?"var(--blue-dim)":"transparent", transition:"all .15s" }}>
                 <div className="fw6 f12 mb8" style={{ marginBottom:5 }}>{o.title}</div>
-                <div className="row gap6 mb8"><span className="bdg bdg-b">{o.agency}</span><Sec s={o.sector}/></div>
+                <div className="row gap6 mb8"><span className="bdg bdg-b">{o.fullParentPathName}</span><Sec s={o.organizationType}/></div>
                 <div className="row gap8"><span className="mono f10 c-fog">Incumbent:</span><span className="fw6 f11">{o.incumbent}</span><span className={`bdg ${o.incumbentStr==="Strong"?"bdg-r":o.incumbentStr==="Medium"?"bdg-a":"bdg-g"}`}>{o.incumbentStr}</span></div>
               </div>
             ))}
@@ -1270,9 +1270,9 @@ function PipelineBoard({ opps, setOpps }) {
                 {items.map(o=>(
                   <div className="kcard" key={o.id}>
                     <div className="fw6 f11 c-snow mb8" style={{ lineHeight:1.35 }}>{o.title}</div>
-                    <div className="mono f10 c-fog mb8">{o.agency}</div>
-                    <div className="row gap6 mb8"><Dec d={o.decision}/><span className="mono f10" style={{ color:pc(o.pwin) }}>{o.pwin}%</span></div>
-                    <Sec s={o.sector}/>
+                    <div className="mono f10 c-fog mb8">{o.fullParentPathName}</div>
+                    <div className="row gap6 mb8"><Dec d={o.typeOfSetAsideDescription}/><span className="mono f10" style={{ color:pc(o.pwin) }}>50%</span></div>
+                    <Sec s={o.organizationType}/>
                     <div style={{ marginTop:8 }}>
                       <select className="fsel" style={{ fontSize:10, padding:"3px 6px" }} value={o.stage} onChange={e=>move(o,e.target.value)}>
                         {stages.map(s=><option key={s}>{s}</option>)}
@@ -1439,8 +1439,8 @@ Pipeline: ${JSON.stringify(opps.map(o=>({title:o.title,value:o.value,margin:o.ma
           <div className="ctit">Margin by Opportunity</div>
           {opps.map((o,i)=>(
             <div key={i} style={{ marginBottom:10 }}>
-              <div className="row-b mb8"><span className="fw6 f12" style={{ maxWidth:280 }}>{o.title}</span><div className="row gap8"><span className="mono f10 c-fog">${o.value}M</span><span className="mono fw7 f12" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>{o.margin}%</span></div></div>
-              <Bar v={o.margin} color={o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)"} h={6}/>
+              <div className="row-b mb8"><span className="fw6 f12" style={{ maxWidth:280 }}>{o.title}</span><div className="row gap8"><span className="mono f10 c-fog">${o.naicsCode}</span><span className="mono fw7 f12" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>15%</span></div></div>
+              <Bar v={15} color={o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)"} h={6}/>
             </div>
           ))}
         </div>
@@ -1639,16 +1639,16 @@ function SavedOpps({ opps }) {
               {shown.length===0?<tr><td colSpan={11} style={{ textAlign:"center", padding:32, color:"var(--fog)" }}>No opportunities in this category.</td></tr>:shown.map(o=>(
                 <tr key={o.id}>
                   <td className="fw6 f12" style={{ maxWidth:180 }}>{o.title}</td>
-                  <td><span className="bdg bdg-b">{o.agency}</span></td>
-                  <td><Sec s={o.sector}/></td>
+                  <td><span className="bdg bdg-b">{o.fullParentPathName}</span></td>
+                  <td><Sec s={o.organizationType}/></td>
                   <td className="f11 c-fog">{o.setAside}</td>
                   <td className="mono f10 c-fog">{o.vehicle}</td>
                   <td><span className="bdg bdg-f">{o.stage}</span></td>
-                  <td><Dec d={o.decision}/></td>
-                  <td><span className="mono fw7 f11" style={{ color:pc(o.pwin) }}>{o.pwin}%</span></td>
-                  <td className="mono f10 c-fog">${o.value}M</td>
-                  <td className="mono f10" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>{o.margin}%</td>
-                  <td className="mono f10 c-fog">{o.due}</td>
+                  <td><Dec d={o.typeOfSetAsideDescription}/></td>
+                  <td><span className="mono fw7 f11" style={{ color:pc(o.pwin) }}>50%</span></td>
+                  <td className="mono f10 c-fog">${o.naicsCode}</td>
+                  <td className="mono f10" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>15%</td>
+                  <td className="mono f10 c-fog">{o.responseDeadLine}</td>
                 </tr>
               ))}
             </tbody>
@@ -1661,15 +1661,30 @@ function SavedOpps({ opps }) {
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function App() {
+const [samData, setSamData] = useState([]);
+
   const [page, setPage] = useState("exec");
   const [opps, setOpps] = useState(OPPS);
   const [contacts, setContacts] = useState(CONTACTS);
   const [calls, setCalls] = useState(CALLS_LOG);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
 
-  useEffect(() => {
-    fetchSAMData();
-  }, []);
+useEffect(() => {
+
+  async function loadData() {
+
+    const data = await fetchSAMData();
+
+    console.log(data);
+
+    if (data?.opportunitiesData) {
+      setSamData(data.opportunitiesData);
+    }
+  }
+
+  loadData();
+
+}, []);
 
   const NAV = [
     { id:"exec",      label:"Executive Dashboard",   ic:"◈",  sec:"OVERVIEW" },
