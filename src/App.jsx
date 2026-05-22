@@ -1,5 +1,4 @@
-// import { useState, useRef, useCallback } from "react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 const SYS = `You are an AI public-sector capture strategist for Logical Technology and Research (LTR). Be direct, skeptical, strategic, and operationally credible. Never guarantee awards. Never overstate PWIN. Identify operational, financial, legal, procurement, compliance, staffing, and reputation risks. Always evaluate PRIME/SUB/TEAM/NO-BID. LTR holds: GSA MAS, Polaris HUBZone, OASIS+ HUBZone, SeaPort-NxG. Respond only in valid JSON as instructed.`;
@@ -20,33 +19,6 @@ async function ai(prompt, max = 1000) {
   try { return JSON.parse(t.replace(/```json|```/g, "").trim()); }
   catch { return { raw: t }; }
 }
-
-
-
-async function fetchSamOpportunities(setOpps) {
-  try {
-
-   const response = await fetch(
-  "https://api.sam.gov/opportunities/v2/search?api_key=" +
-  import.meta.env.VITE_SAM_API_KEY +
-  "&postedFrom=01/01/2025&postedTo=12/31/2025&limit=10"
-);
-
-    const data = await response.json();
-
-    console.log("SAM API DATA:", data);
-
-    if (data.opportunitiesData) {
-      setOpps(data.opportunitfiesData);
-    }
-
-  } catch (error) {
-    console.error("SAM API Error:", error);
-  }
-}
-
-
-
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const OPPS = [
@@ -431,14 +403,13 @@ function Dl() { return <div className="div"/>; }
 
 // ─── EXECUTIVE DASHBOARD ─────────────────────────────────────────────────────
 function ExecDash({ setPage, opps, contacts, calls }) {
-  // const active = opps.filter(o => o.decision !== "NO-BID");
-  const active = (opps || []).filter(o => o?.decision !== "NO-BID");
+  const active = opps.filter(o => o.decision !== "NO-BID");
   const pipe = active.reduce((a, o) => a + o.value, 0);
   const wtd = active.reduce((a, o) => a + o.value * (o.pwin / 100), 0);
   const avgPwin = Math.round(opps.reduce((a, o) => a + o.pwin, 0) / opps.length);
   const avgMargin = Math.round(active.reduce((a, o) => a + o.margin, 0) / active.length);
-  const urgent = (opps || []).filter(o => { const d = (new Date(o.due) - new Date()) / 86400000; return d > 0 && d < 60; });
-  const sectors = [...new Set((opps || []).map(o => o?.sector))].map(s => ({ s, v: opps.filter(o => o.sector === s).reduce((a, o) => a + o.value, 0) }));
+  const urgent = opps.filter(o => { const d = (new Date(o.due) - new Date()) / 86400000; return d > 0 && d < 60; });
+  const sectors = [...new Set(opps.map(o => o.sector))].map(s => ({ s, v: opps.filter(o => o.sector === s).reduce((a, o) => a + o.value, 0) }));
 
   return (
     <div>
@@ -1690,11 +1661,7 @@ function SavedOpps({ opps }) {
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState("exec");
-  // const [opps, setOpps] = useState(OPPS);
-  const [opps, setOpps] = useState([]);
-  useEffect(() => {
-  fetchSamOpportunities(setOpps);
-}, []);
+  const [opps, setOpps] = useState(OPPS);
   const [contacts, setContacts] = useState(CONTACTS);
   const [calls, setCalls] = useState(CALLS_LOG);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
