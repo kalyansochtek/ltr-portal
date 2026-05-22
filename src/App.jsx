@@ -1664,17 +1664,36 @@ export default function App() {
 const [samData, setSamData] = useState([]);
 
   const [page, setPage] = useState("exec");
-  const [opps, setOpps] = useState(OPPS);
+  const [opps, setOpps] = useState([]);
   const [contacts, setContacts] = useState(CONTACTS);
   const [calls, setCalls] = useState(CALLS_LOG);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
 
 useEffect(() => {
   async function loadSAM() {
+
     const samData = await fetchSAMData();
 
-    if (samData) {
-      setOps(samData);
+    if (samData?.opportunitiesData) {
+
+      const formatted = samData.opportunitiesData.map((item, index) => ({
+        id: index + 1,
+        title: item.title || "No Title",
+        agency: item.fullParentPathName || "Unknown Agency",
+        sector: item.organizationType || "Federal",
+        naics: item.naicsCode || "N/A",
+        type: item.type || "Solicitation",
+        setAside: item.typeOfSetAsideDescription || "None",
+        due: item.responseDeadLine || "TBD",
+        decision: "TEAM",
+        pwin: 50,
+        vehicle: "GSA MAS",
+        stage: "Identify",
+        value: item.naicsCode || "N/A",
+        margin: 15,
+      }));
+
+      setOps(formatted);
     }
   }
 
