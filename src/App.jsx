@@ -1670,32 +1670,45 @@ const [samData, setSamData] = useState([]);
   const addOpp = useCallback(o => setOpps(p => [o, ...p]), []);
 
 useEffect(() => {
-  async function loadSAM() {
+ async function loadSAM() {
+  const samData = await fetchSAMData();
 
-    const samData = await fetchSAMData();
+  if (samData?.opportunitiesData) {
 
-    if (samData?.opportunitiesData) {
-
-      const formatted = samData.opportunitiesData.map((item, index) => ({
+    const formattedOpps =
+      samData.opportunitiesData.map((item, index) => ({
         id: index + 1,
+
         title: item.title || "No Title",
-        agency: item.fullParentPathName || "Unknown Agency",
-        sector: item.organizationType || "Federal",
-        naics: item.naicsCode || "N/A",
-        type: item.type || "Solicitation",
-        setAside: item.typeOfSetAsideDescription || "None",
-        due: item.responseDeadLine || "TBD",
-        decision: "TEAM",
+
+        agency:
+          item.fullParentPathName || "Unknown Agency",
+
+        sector: item.naicsCode || "N/A",
+
+        setAside:
+          item.typeOfSetAsideDescription || "Open",
+
+        vehicle: item.type || "Federal",
+
+        stage: "IDENTIFY",
+
+        decision: "PRIME",
+
         pwin: 50,
-        vehicle: "GSA MAS",
-        stage: "Identify",
-        value: item.naicsCode || "N/A",
+
+        value: "$1M",
+
         margin: 15,
+
+        due: item.responseDeadLine
+          ? item.responseDeadLine.split("T")[0]
+          : "N/A",
       }));
 
-      setOps(formatted);
-    }
+    setOpps(formattedOpps);
   }
+}
 
   loadSAM();
 }, []);
