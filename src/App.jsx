@@ -529,9 +529,9 @@ function ExecDash({ setPage, opps, contacts, calls }) {
                   <td><Sec s={o.sector}/></td>
                   <td><span className="bdg bdg-f">{o.stage}</span></td>
                   <td><Dec d={o.decision}/></td>
-                  <td><span className="mono fw7 f12" style={{ color: pc(o.pwin) }}>50%</span></td>
+                  <td><span className="mono fw7 f12" style={{ color: pc(o.pwin) }}>{o.pwin}%</span></td>
                   <td className="mono f11 c-fog">${o.value}</td>
-                  <td className="mono f11" style={{ color: o.margin >= 18 ? "var(--emerald)" : o.margin >= 12 ? "var(--amber)" : "var(--rose)" }}>15%</td>
+                  <td className="mono f11" style={{ color: o.margin >= 18 ? "var(--emerald)" : o.margin >= 12 ? "var(--amber)" : "var(--rose)" }}>{o.margin}%</td>
                   <td className="mono f11 c-fog">{o.due}</td>
                 </tr>
               ))}
@@ -546,7 +546,11 @@ function ExecDash({ setPage, opps, contacts, calls }) {
 // ─── PWIN DASHBOARD ──────────────────────────────────────────────────────────
 function PWINDash({ opps }) {
   const [view, setView] = useState("all");
-  const views = { all: opps, high: opps.filter(o => o.pwin >= 60), urgent: opps.filter(o => { const d = (new Date(o.due) - new Date()) / 86400000; return d > 0 && d < 45; }), nobid: opps.filter(o => o.decision === "NO-BID") };
+  // const views = { all: opps, high: opps.filter(o => o.pwin >= 60), urgent: opps.filter(o => { const d = (new Date(o.due) - new Date()) / 86400000; return d > 0 && d < 45; }), nobid: opps.filter(o => o.decision === "NO-BID") };
+  const filtered = opps.filter((o) => {
+  if (view === "all") return true;
+  return o.decision === view.toUpperCase();
+});
   const shown = views[view] || opps;
 
   return (
@@ -1271,7 +1275,7 @@ function PipelineBoard({ opps, setOpps }) {
                   <div className="kcard" key={o.id}>
                     <div className="fw6 f11 c-snow mb8" style={{ lineHeight:1.35 }}>{o.title}</div>
                     <div className="mono f10 c-fog mb8">{o.agency}</div>
-                    <div className="row gap6 mb8"><Dec d={o.decision}/><span className="mono f10" style={{ color:pc(o.pwin) }}>50%</span></div>
+                    <div className="row gap6 mb8"><Dec d={o.decision}/><span className="mono f10" style={{ color:pc(o.pwin) }}>{o.pwin}%</span></div>
                     <Sec s={o.sector}/>
                     <div style={{ marginTop:8 }}>
                       <select className="fsel" style={{ fontSize:10, padding:"3px 6px" }} value={o.stage} onChange={e=>move(o,e.target.value)}>
@@ -1626,7 +1630,15 @@ function Analytics({ opps, contacts, calls }) {
 function SavedOpps({ opps }) {
   const [filter, setFilter] = useState("ALL");
   const fs = ["ALL","PRIME","SUB","TEAM","NO-BID"];
-  const shown = filter==="ALL"?opps:opps.filter(o=>o.decision===filter);
+  // const shown = filter==="ALL"?opps:opps.filter(o=>o.decision===filter);
+  const shown =
+  filter === "ALL"
+    ? opps
+    : opps.filter(
+        (o) =>
+          o.decision?.toUpperCase().trim() ===
+          filter.toUpperCase().trim()
+      );
   return (
     <div>
       <div className="ph"><div><div className="ph-title">Opportunity Database</div><div className="ph-sub">{opps.length} TRACKED OPPORTUNITIES · FULL PIPELINE REGISTRY</div></div></div>
@@ -1645,9 +1657,9 @@ function SavedOpps({ opps }) {
                   <td className="mono f10 c-fog">{o.vehicle}</td>
                   <td><span className="bdg bdg-f">{o.stage}</span></td>
                   <td><Dec d={o.decision}/></td>
-                  <td><span className="mono fw7 f11" style={{ color:pc(o.pwin) }}>50%</span></td>
+                  <td><span className="mono fw7 f11" style={{ color:pc(o.pwin) }}>{o.pwin}%</span></td>
                   <td className="mono f10 c-fog">${o.value}</td>
-                  <td className="mono f10" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>15%</td>
+                  <td className="mono f10" style={{ color:o.margin>=18?"var(--emerald)":o.margin>=12?"var(--amber)":"var(--rose)" }}>{o.margin}%</td>
                   <td className="mono f10 c-fog">{o.due}</td>
                 </tr>
               ))}
